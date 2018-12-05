@@ -1,0 +1,33 @@
+/* Grammar
+ *
+ * 1. not
+ * 2. and
+ * 3. xor
+ * 4. or
+ *
+ * S -> S or  A | A
+ * A -> A xor B | B
+ * B -> B and C | C
+ * C -> not C   | D
+ * D -> [a-z]   |(S)
+ *
+ * S -> AS'
+ * S' -> or AS'  | eps
+ * A  -> BA'
+ * A' -> xor BA' | eps
+ * B  -> CB'
+ * B' -> and CB' | eps
+ * C  -> not C   | D
+ * D  -> LETTER  | (S)
+ *
+ *          FIRST           | FOLLOW
+ * S  { not, LETTER, ( }    | { $, ) }
+ * S' { or, eps }           | { $, ) }
+ * A  { not, LETTER, ( }    | { or, $, ) }
+ * A' { xor, eps }          | { or, $, ) }
+ * B  { not, LETTER, ( }    | { xor, or, $, ) }
+ * B' { and, eps }          | { xor, or, $, ) }
+ * C  { not, LETTER, ( }    | { and, xor, or, $, ) }
+ * D  { LETTER, ( }         | { and, xor, or, $, ) }
+ *
+ */
