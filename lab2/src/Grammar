@@ -3,18 +3,17 @@
  * 1. not
  * 2. and
  * 3. xor
- * 4. or
+ * 4. or (XOR, OR same priority)
  *
- * S -> S or  A | A
- * A -> A xor B | B
+ * S -> S or  B | B
+ * S -> S xor B | B
  * B -> B and C | C
  * C -> not C   | D
  * D -> [a-z]   |(S)
  *
- * S -> AS'
- * S' -> or AS'  | eps
- * A  -> BA'
- * A' -> xor BA' | eps
+ * S -> BS'
+ * S' -> or BS'  | eps
+ * S' -> xor BS'  | eps
  * B  -> CB'
  * B' -> and CB' | eps
  * C  -> not C   | D
@@ -22,9 +21,7 @@
  *
  *          FIRST           | FOLLOW
  * S  { not, LETTER, ( }    | { $, ) }
- * S' { or, eps }           | { $, ) }
- * A  { not, LETTER, ( }    | { or, $, ) }
- * A' { xor, eps }          | { or, $, ) }
+ * S' { or, xor, eps }      | { $, ) }
  * B  { not, LETTER, ( }    | { xor, or, $, ) }
  * B' { and, eps }          | { xor, or, $, ) }
  * C  { not, LETTER, ( }    | { and, xor, or, $, ) }

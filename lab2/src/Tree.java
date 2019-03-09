@@ -63,7 +63,7 @@ public class Tree {
         }
         data.append("}");
         try {
-            FileWriter temp = new FileWriter("./src/output.dot");
+            FileWriter temp = new FileWriter("./lab2/src/output.dot");
             temp.write(data.toString());
             temp.close();
         } catch (IOException e) {

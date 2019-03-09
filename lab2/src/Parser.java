@@ -1,4 +1,5 @@
 import java.io.InputStream;
+import java.security.cert.TrustAnchor;
 import java.text.ParseException;
 
 public class Parser {
@@ -7,16 +8,26 @@ public class Parser {
     private Tree S() throws ParseException {
         LexicalAnalyzer.Token curToken = lex.curToken();
 //        System.out.println("in S and token" + lex.curVal());
+        Tree curRes;
         Tree aRes;
         Tree sPrimeRes;
         switch (curToken) {
             case NOT:
             case VAL:
             case LPAREN:
-                aRes = A();
+                aRes = B();
+                String op = lex.curVal();
                 sPrimeRes = SPrime();
                 if (sPrimeRes != null) {
-                    return new Tree("or", aRes, sPrimeRes);
+                    curRes = new Tree(op, aRes, sPrimeRes);
+                    while (true) {
+                        op = lex.curVal();
+                        sPrimeRes = SPrime();
+                        if (sPrimeRes == null)
+                            return curRes;
+                        else
+                            curRes = new Tree(op, curRes, sPrimeRes);
+                    }
                 } else {
                     return aRes;
                 }
@@ -29,14 +40,9 @@ public class Parser {
 //        System.out.println("in SPrime and token" + lex.curVal());
         switch (curToken) {
             case OR:
+            case XOR:
                 lex.nextToken();
-                Tree aRes = A();
-                Tree sPrimeRes = SPrime();
-                if (sPrimeRes != null) {
-                    return new Tree("or", aRes, sPrimeRes);
-                } else {
-                    return aRes;
-                }
+                return B();
             default:
                 return null;
         }
@@ -46,6 +52,7 @@ public class Parser {
 //        System.out.println("in A and token" + lex.curVal());
         Tree bRes;
         Tree aPrimeRes;
+        Tree curRes;
         switch (curToken) {
             case NOT:
             case VAL:
@@ -53,7 +60,14 @@ public class Parser {
                 bRes = B();
                 aPrimeRes = APrime();
                 if (aPrimeRes != null) {
-                    return new Tree("xor", bRes, aPrimeRes);
+                    curRes = new Tree("xor", bRes, aPrimeRes);
+                    while (true) {
+                        aPrimeRes = APrime();
+                        if (aPrimeRes == null)
+                            return curRes;
+                        else
+                            curRes = new Tree("xor", curRes, aPrimeRes);
+                    }
                 } else {
                     return bRes;
                 }
@@ -64,18 +78,10 @@ public class Parser {
     private Tree APrime() throws ParseException {
         LexicalAnalyzer.Token curToken = lex.curToken();
 //        System.out.println("in APrime and token" + lex.curVal());
-        Tree bRes;
-        Tree aPrimeRes;
         switch (curToken) {
             case XOR:
                 lex.nextToken();
-                bRes = B();
-                aPrimeRes = APrime();
-                if (aPrimeRes != null) {
-                    return new Tree("xor", bRes, aPrimeRes);
-                } else {
-                    return bRes;
-                }
+                return B();
             default:
                 return null;
         }
@@ -85,6 +91,7 @@ public class Parser {
 //        System.out.println("in B and token" + lex.curVal());
         Tree cRes;
         Tree bPrimeRes;
+        Tree curRes;
         switch (curToken) {
             case NOT:
             case VAL:
@@ -92,7 +99,14 @@ public class Parser {
                 cRes = C();
                 bPrimeRes = BPrime();
                 if (bPrimeRes != null) {
-                    return new Tree("and", cRes, bPrimeRes);
+                    curRes = new Tree("and", cRes, bPrimeRes);
+                    while (true) {
+                        bPrimeRes = BPrime();
+                        if (bPrimeRes == null)
+                            return curRes;
+                        else
+                            curRes = new Tree("and", curRes, bPrimeRes);
+                    }
                 } else {
                     return cRes;
                 }
@@ -103,18 +117,10 @@ public class Parser {
     private Tree BPrime() throws ParseException {
         LexicalAnalyzer.Token curToken = lex.curToken();
 //        System.out.println("in BPrime and token" + lex.curVal());
-        Tree cRes;
-        Tree bPrimeRes;
         switch (curToken) {
             case AND:
                 lex.nextToken();
-                cRes = C();
-                bPrimeRes = BPrime();
-                if (bPrimeRes != null) {
-                    return new Tree("and", cRes, bPrimeRes);
-                } else {
-                    return cRes;
-                }
+                return C();
             default:
                 return null;
         }

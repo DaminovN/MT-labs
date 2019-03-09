@@ -44,6 +44,7 @@ public class Tester {
         if (!res.equals(testTree)) {
             throw new ParseException("WA in test " + testStr, 0);
         }
+        System.out.println(testStr);
         System.out.println("OK.");
     }
     public static void priorityTest() throws ParseException {

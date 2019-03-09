@@ -1,7 +1,7 @@
 digraph Tree {
-0 [label="not"];
-1 [label="not"];
+0 [label="and"];
+1 [label="a"];
 0 -> {1};
-2 [label="a"];
-1 -> {2};
+2 [label="b"];
+0 -> {2};
 }
